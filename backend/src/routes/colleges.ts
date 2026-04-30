@@ -57,7 +57,8 @@ router.get('/', async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching colleges:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    const errorMessage = error instanceof Error ? error.message : JSON.stringify(error);
+    res.status(500).json({ error: 'Internal server error', details: errorMessage });
   }
 });
 
