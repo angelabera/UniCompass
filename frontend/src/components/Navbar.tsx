@@ -6,6 +6,7 @@ import { Compass, LogOut, Heart, ChevronDown, MessageCircle, Search, BarChart3 }
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function Navbar() {
   const { isAuthenticated, user, logout } = useStore();
@@ -44,6 +45,7 @@ export default function Navbar() {
           )}
 
           <div className="flex items-center space-x-4">
+            <ThemeToggle />
             {isAuthenticated ? (
               <div className="relative">
                 <button

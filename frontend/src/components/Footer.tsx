@@ -1,20 +1,26 @@
 "use client";
 
 import Link from "next/link";
-import { BarChart3, Compass, Heart, MessageCircle, Search } from "lucide-react";
+import { Compass, Mail, MapPin, ShieldCheck } from "lucide-react";
 
-const links = [
-  { href: "/colleges", label: "Discover", icon: Search },
-  { href: "/compare", label: "Compare", icon: BarChart3 },
-  { href: "/questions", label: "Q&A", icon: MessageCircle },
-  { href: "/saved", label: "Saved", icon: Heart }
+const platformLinks = [
+  { href: "/about", label: "About UniCompass" },
+  { href: "/colleges", label: "College Directory" },
+  { href: "/compare", label: "Compare Colleges" },
+  { href: "/questions", label: "Student Q&A" }
+];
+
+const supportLinks = [
+  { href: "/login", label: "Student Login" },
+  { href: "/register", label: "Create Account" },
+  { href: "/saved", label: "Saved Colleges" }
 ];
 
 export default function Footer() {
   return (
-    <footer className="mt-10 px-4 pb-6 md:px-8">
-      <div className="mx-auto max-w-7xl overflow-hidden rounded-3xl border border-border bg-card/80 shadow-xl shadow-slate-900/5 backdrop-blur">
-        <div className="grid gap-8 p-6 md:grid-cols-[1.2fr_0.8fr] md:p-8">
+    <footer className="mt-10 border-t border-border/80 bg-background/65 px-4 py-10 backdrop-blur md:px-8">
+      <div className="mx-auto max-w-7xl">
+        <div className="grid gap-10 md:grid-cols-[1.35fr_0.65fr_0.65fr_0.8fr]">
           <div>
             <Link href="/" className="mb-4 inline-flex items-center gap-2">
               <div className="rounded-xl bg-gradient-to-br from-blue-600 to-teal-500 p-2 text-white shadow-sm shadow-blue-500/20">
@@ -22,34 +28,55 @@ export default function Footer() {
               </div>
               <span className="text-xl font-extrabold tracking-tight text-foreground">UniCompass</span>
             </Link>
-            <p className="max-w-xl text-sm leading-7 text-muted-foreground">
-              A modern college discovery workspace for exploring institutions, comparing choices, saving favorites, and asking useful student questions.
+            <p className="max-w-md text-sm leading-7 text-muted-foreground">
+              A college decision platform for researching institutions, comparing options, saving shortlists, and asking practical student questions.
             </p>
+            <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm">
+              <ShieldCheck className="h-3.5 w-3.5 text-teal-600" />
+              Built for clearer education decisions
+            </div>
           </div>
 
-          <div className="md:justify-self-end">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">Explore</p>
-            <div className="grid grid-cols-2 gap-2">
-              {links.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="inline-flex items-center gap-2 rounded-full border border-border bg-background/75 px-4 py-2 text-sm font-medium text-muted-foreground transition-all hover:-translate-y-0.5 hover:bg-white hover:text-foreground hover:shadow-sm dark:hover:bg-slate-900"
-                  >
-                    <Icon className="h-4 w-4 text-blue-600" />
-                    {item.label}
-                  </Link>
-                );
-              })}
+          <div>
+            <h3 className="mb-4 text-sm font-bold text-foreground">Platform</h3>
+            <div className="space-y-3">
+              {platformLinks.map((link) => (
+                <Link key={link.href} href={link.href} className="block text-sm text-muted-foreground transition-colors hover:text-foreground">
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <h3 className="mb-4 text-sm font-bold text-foreground">Account</h3>
+            <div className="space-y-3">
+              {supportLinks.map((link) => (
+                <Link key={link.href} href={link.href} className="block text-sm text-muted-foreground transition-colors hover:text-foreground">
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <h3 className="mb-4 text-sm font-bold text-foreground">Contact</h3>
+            <div className="space-y-3 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <Mail className="h-4 w-4 text-blue-600" />
+                support@unicompass.app
+              </div>
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-teal-600" />
+                India
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 border-t border-border bg-muted/30 px-6 py-4 text-xs text-muted-foreground md:flex-row md:items-center md:justify-between md:px-8">
-          <span>© {new Date().getFullYear()} UniCompass. Built for clearer college decisions.</span>
-          <span>Discover. Compare. Decide.</span>
+        <div className="mt-10 flex flex-col gap-3 border-t border-border pt-5 text-xs text-muted-foreground md:flex-row md:items-center md:justify-between">
+          <span>© {new Date().getFullYear()} UniCompass. All rights reserved.</span>
+          <span>Made for students comparing their next step.</span>
         </div>
       </div>
     </footer>
