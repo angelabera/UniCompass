@@ -8,15 +8,45 @@ import { motion } from "framer-motion";
 import { MapPin, Star, BookOpen, Briefcase, Heart, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 
+interface Course {
+  id: string;
+  name: string;
+  duration: string;
+  fees?: number | null;
+}
+
+interface Placement {
+  id: string;
+  year: number;
+  highestPackage?: number | null;
+  averagePackage?: number | null;
+  placementPercentage?: number | null;
+}
+
+interface College {
+  id: string;
+  name: string;
+  location: string;
+  description?: string | null;
+  imageUrl?: string | null;
+  rating?: number | null;
+  courses?: Course[];
+  placements?: Placement[];
+}
+
 export default function CollegeDetails() {
   const { id } = useParams();
   const router = useRouter();
-  const [college, setCollege] = useState<any>(null);
+  const [college, setCollege] = useState<College | null>(null);
   const [loading, setLoading] = useState(true);
   
   const { isAuthenticated, savedColleges, addSavedCollege, removeSavedCollege } = useStore();
   const isSaved = savedColleges.some((c) => c.id === id);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [id]);
 
   useEffect(() => {
     const fetchCollege = async () => {
@@ -141,7 +171,7 @@ export default function CollegeDetails() {
               </h3>
               {college.courses && college.courses.length > 0 ? (
                 <ul className="space-y-3">
-                  {college.courses.map((course: any) => (
+                  {college.courses.map((course) => (
                     <li key={course.id} className="flex flex-col sm:flex-row sm:items-center justify-between py-2 border-b border-border/50 last:border-0 last:pb-0">
                       <div className="font-medium text-sm text-foreground mb-1 sm:mb-0">{course.name}</div>
                       <div className="flex items-center space-x-3 text-xs">
@@ -164,7 +194,7 @@ export default function CollegeDetails() {
               </h3>
               {college.placements && college.placements.length > 0 ? (
                 <div className="space-y-4">
-                  {college.placements.map((placement: any) => (
+                  {college.placements.map((placement) => (
                     <div key={placement.id} className="bg-muted/30 p-4 rounded-lg border border-border/50">
                       <div className="font-semibold text-sm text-foreground mb-3 flex items-center">
                         <span className="bg-primary text-primary-foreground text-[10px] px-2 py-0.5 rounded-full mr-2">CLASS OF {placement.year}</span>
@@ -172,19 +202,19 @@ export default function CollegeDetails() {
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <div className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium mb-1">Highest Package</div>
-                          <div className="text-sm font-semibold text-foreground">₹{(placement.highestPackage / 100000).toFixed(1)} LPA</div>
+                          <div className="text-sm font-semibold text-foreground">₹{((placement.highestPackage || 0) / 100000).toFixed(1)} LPA</div>
                         </div>
                         <div>
                           <div className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium mb-1">Average Package</div>
-                          <div className="text-sm font-semibold text-foreground">₹{(placement.averagePackage / 100000).toFixed(1)} LPA</div>
+                          <div className="text-sm font-semibold text-foreground">₹{((placement.averagePackage || 0) / 100000).toFixed(1)} LPA</div>
                         </div>
                         <div className="col-span-2 mt-2">
                           <div className="flex justify-between items-center mb-1.5">
                             <span className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">Placement Rate</span>
-                            <span className="text-xs font-semibold text-foreground">{placement.placementPercentage}%</span>
+                            <span className="text-xs font-semibold text-foreground">{placement.placementPercentage || 0}%</span>
                           </div>
                           <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
-                            <div className="bg-primary h-full rounded-full" style={{ width: `${placement.placementPercentage}%` }}></div>
+                            <div className="bg-primary h-full rounded-full" style={{ width: `${placement.placementPercentage || 0}%` }}></div>
                           </div>
                         </div>
                       </div>
