@@ -12,7 +12,7 @@ async function main() {
       location: 'Mumbai, Maharashtra',
       description: 'One of the premier engineering institutes in India, known for its excellent placements and research facilities.',
       logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/1/1d/Indian_Institute_of_Technology_Bombay_Logo.svg/1200px-Indian_Institute_of_Technology_Bombay_Logo.svg.png',
-      imageUrl: 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&q=80&w=1000',
+      imageUrl: 'https://techportal.in/wp-content/uploads/2023/11/iit-bombay.jpg',
       rating: 4.9,
       fees: 250000,
       courses: {
@@ -34,7 +34,7 @@ async function main() {
       location: 'New Delhi, Delhi',
       description: 'Formerly DCE, it is one of the oldest engineering colleges in India with a strong alumni network.',
       logo: 'https://upload.wikimedia.org/wikipedia/en/b/b5/DTU%2C_Delhi_official_logo.png',
-      imageUrl: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&q=80&w=1000',
+      imageUrl: 'https://img.collegepravesh.com/2015/02/Delhi-Technological-University.jpg',
       rating: 4.5,
       fees: 190000,
       courses: {
@@ -55,7 +55,7 @@ async function main() {
       location: 'Pilani, Rajasthan',
       description: 'A premier private institute known for its zero-attendance policy and entrepreneurial culture.',
       logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/BITS_Pilani-Logo.svg/1200px-BITS_Pilani-Logo.svg.png',
-      imageUrl: 'https://images.unsplash.com/photo-1592280771190-3e2e4d571952?auto=format&fit=crop&q=80&w=1000',
+      imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9Rqqg60vKbBN3WjdkkXvdO6jR116-4ZV91Q&s',
       rating: 4.8,
       fees: 450000,
       courses: {
@@ -76,7 +76,7 @@ async function main() {
       location: 'Tiruchirappalli, Tamil Nadu',
       description: 'Ranked consistently as the top NIT in India, offering excellent academics and campus life.',
       logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/4/49/NIT_Trichy_logo.svg/1200px-NIT_Trichy_logo.svg.png',
-      imageUrl: 'https://images.unsplash.com/photo-1606761568499-6d2451b23c66?auto=format&fit=crop&q=80&w=1000',
+      imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSf9kA_ORDaQ55uW72dg6bzaQwxT8vgMmOPmw&s',
       rating: 4.6,
       fees: 150000,
       courses: {
@@ -97,7 +97,7 @@ async function main() {
       location: 'Vellore, Tamil Nadu',
       description: 'A leading private university known for its massive infrastructure and high placement volume.',
       logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/c/cb/VIT_Logo.png/1200px-VIT_Logo.png',
-      imageUrl: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=1000',
+      imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXr46q-f-rnvkY7efsuajxc_hQde2l6kKAsg&s',
       rating: 4.3,
       fees: 300000,
       courses: {

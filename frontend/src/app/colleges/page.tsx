@@ -18,7 +18,8 @@ interface College {
 
 export default function CollegesPage() {
   const [colleges, setColleges] = useState<College[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
   
   // Filters
   const [search, setSearch] = useState("");
@@ -28,6 +29,11 @@ export default function CollegesPage() {
   
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
+  useEffect(() => {
+    setMounted(true);
+    setLoading(true);
+  }, []);
 
   const fetchColleges = async () => {
     setLoading(true);
@@ -51,12 +57,14 @@ export default function CollegesPage() {
   };
 
   useEffect(() => {
+    if (!mounted) return;
     setPage(1);
-  }, [debouncedSearch, location, maxFees]);
+  }, [debouncedSearch, location, maxFees, mounted]);
 
   useEffect(() => {
+    if (!mounted) return;
     fetchColleges();
-  }, [debouncedSearch, location, maxFees, page]);
+  }, [debouncedSearch, location, maxFees, page, mounted]);
 
   return (
     <div className="py-8">
@@ -67,55 +75,59 @@ export default function CollegesPage() {
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4 mb-10 bg-muted/30 p-4 rounded-xl border border-border">
-        <div className="relative flex-grow">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search className="h-4 w-4 text-muted-foreground" />
-          </div>
-          <input
-            type="text"
-            className="block w-full pl-9 pr-3 py-2.5 bg-background border border-border rounded-md text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-            placeholder="Search by institution name..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
-        
-        <div className="flex gap-4 w-full md:w-auto">
-          <select
-            className="block w-full md:w-48 pl-3 pr-10 py-2.5 bg-background border border-border text-sm rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-colors appearance-none"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-          >
-            <option value="">All Regions</option>
-            <option value="Mumbai">Mumbai</option>
-            <option value="Delhi">Delhi</option>
-            <option value="Pilani">Pilani</option>
-            <option value="Tamil Nadu">Tamil Nadu</option>
-          </select>
-          
-          <select
-            className="block w-full md:w-48 pl-3 pr-10 py-2.5 bg-background border border-border text-sm rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-colors appearance-none"
-            value={maxFees}
-            onChange={(e) => setMaxFees(e.target.value)}
-          >
-            <option value="">Any Tuition</option>
-            <option value="200000">Under ₹2L / year</option>
-            <option value="300000">Under ₹3L / year</option>
-            <option value="500000">Under ₹5L / year</option>
-          </select>
+      {mounted && (
+        <>
+          <div className="flex flex-col md:flex-row gap-4 mb-10 bg-muted/30 p-4 rounded-xl border border-border">
+            <div className="relative flex-grow">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-4 w-4 text-muted-foreground" />
+              </div>
+              <input
+                type="text"
+                className="block w-full pl-9 pr-3 py-2.5 bg-background border border-border rounded-md text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                placeholder="Search by institution name..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+            
+            <div className="flex gap-4 w-full md:w-auto">
+              <select
+                className="block w-full md:w-48 pl-3 pr-10 py-2.5 bg-background border border-border text-sm rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-colors appearance-none"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+              >
+                <option value="">All Regions</option>
+                <option value="Mumbai">Mumbai</option>
+                <option value="Delhi">Delhi</option>
+                <option value="Pilani">Pilani</option>
+                <option value="Tamil Nadu">Tamil Nadu</option>
+              </select>
+              
+              <select
+                className="block w-full md:w-48 pl-3 pr-10 py-2.5 bg-background border border-border text-sm rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-colors appearance-none"
+                value={maxFees}
+                onChange={(e) => setMaxFees(e.target.value)}
+              >
+                <option value="">Any Tuition</option>
+                <option value="200000">Under ₹2L / year</option>
+                <option value="300000">Under ₹3L / year</option>
+                <option value="500000">Under ₹5L / year</option>
+              </select>
 
-          {(search || location || maxFees) && (
-            <button 
-              onClick={() => { setSearch(""); setLocation(""); setMaxFees(""); }}
-              className="p-2.5 text-muted-foreground hover:text-foreground bg-background border border-border rounded-md hover:bg-muted transition-colors flex-shrink-0 shadow-sm flex items-center justify-center"
-              title="Clear filters"
-            >
-              <FilterX className="h-4 w-4" />
-            </button>
-          )}
-        </div>
-      </div>
+              {(search || location || maxFees) && (
+                <button 
+                  onClick={() => { setSearch(""); setLocation(""); setMaxFees(""); }}
+                  className="p-2.5 text-muted-foreground hover:text-foreground bg-background border border-border rounded-md hover:bg-muted transition-colors flex-shrink-0 shadow-sm flex items-center justify-center"
+                  title="Clear filters"
+                >
+                  <FilterX className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+          </div>
+        </>
+      )}
 
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -131,7 +143,7 @@ export default function CollegesPage() {
             </div>
           ))}
         </div>
-      ) : colleges.length > 0 ? (
+      ) : mounted && colleges.length > 0 ? (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {colleges.map((college, idx) => (
@@ -199,13 +211,13 @@ export default function CollegesPage() {
             </div>
           )}
         </>
-      ) : (
+      ) : mounted ? (
         <div className="text-center py-20 border border-dashed border-border rounded-xl bg-muted/20">
           <Search className="h-10 w-10 text-muted-foreground mx-auto mb-3 opacity-50" />
           <h3 className="text-lg font-medium text-foreground mb-1">No results found</h3>
           <p className="text-sm text-muted-foreground">Try adjusting your search or filters to find what you're looking for.</p>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
