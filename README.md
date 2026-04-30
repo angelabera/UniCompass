@@ -1,171 +1,336 @@
-# UniCompass
+# 🎓 UniCompass - College Discovery Platform
 
-UniCompass is a full-stack college discovery platform built to help students explore institutions, compare options, save favorites, and ask practical questions before making education decisions.
+> **Your ultimate guide to finding the perfect college**
 
-The app combines a modern Next.js frontend with an Express and Prisma backend, using a clean responsive UI, authentication, dark mode, and a student-focused Q&A experience.
+UniCompass is a modern, full-stack college discovery platform that empowers students to explore institutions, compare options, save favorites, and connect with peers through a collaborative Q&A experience. Built with cutting-edge web technologies, UniCompass combines an intuitive interface with powerful features to help students make informed education decisions.
 
-## Features
+---
 
-- **College Discovery**: Browse colleges with search, pagination, location filters, fee filters, and college type filters.
-- **College Details**: View individual college pages with overview, courses, ratings, and placement statistics.
-- **Compare Colleges**: Compare multiple institutions side by side using important decision factors.
-- **Student Q&A**: Ask questions, answer questions, and view discussions from other students.
-- **Authentication**: Register and log in with JWT-based authentication.
-- **Saved Colleges**: Save colleges to a personal shortlist after logging in.
-- **Dark Mode**: Toggle between light and dark themes with persistent preference.
-- **Responsive UI**: Modern gradient-based interface with glass panels, polished cards, and mobile-friendly layouts.
-- **About Page and Footer**: Informational About page and a styled footer matching the visual identity of the site.
+## ✨ Key Features
 
-## Tech Stack
+### 🔍 **Smart College Discovery**
+- Advanced search with real-time filtering
+- Filter by location, fees, and college type (Government/Private)
+- Pagination for seamless browsing
+- Detailed college profiles with ratings and statistics
 
-### Frontend
+### 📊 **Side-by-Side Comparison**
+- Compare up to 4 colleges simultaneously
+- View courses, placement statistics, and fees side by side
+- Make data-driven decisions with visual comparisons
 
-- Next.js App Router
-- React
-- TypeScript
-- Tailwind CSS
-- Framer Motion
-- Zustand
-- Axios
-- Lucide React Icons
+### 💾 **Personal Shortlist**
+- Save favorite colleges to your personal dashboard
+- Quick access to bookmarked institutions
+- Organize your college search journey
 
-### Backend
+### 💬 **Student Q&A Hub**
+- Ask questions about colleges and courses
+- Get answers from other students and community members
+- Real-time discussions and peer insights
+- Track questions by college
 
-- Node.js
-- Express.js
-- TypeScript
-- Prisma ORM
-- JWT authentication
-- bcrypt password hashing
+### 🔐 **Secure Authentication**
+- User registration and login with email
+- JWT-based session management
+- Password hashing with bcrypt
+- Persistent authentication
 
-### Database
+### 🌓 **Dark/Light Mode**
+- Seamless theme switching
+- Persistent user preference
+- Eye-friendly interface for all lighting conditions
 
-- SQLite for local development through Prisma
+### 📱 **Fully Responsive Design**
+- Mobile-first approach
+- Smooth animations and transitions
+- Glass morphism UI components
+- Polished gradient-based design system
 
-## Project Structure
+---
 
-```text
-UniCo/
-├── backend/
+## 🛠️ Tech Stack
+
+### **Frontend**
+| Technology | Purpose |
+|-----------|---------|
+| **Next.js 16** | React framework with App Router |
+| **React 19** | UI component library |
+| **TypeScript** | Type-safe JavaScript |
+| **Tailwind CSS 4** | Utility-first CSS framework |
+| **Framer Motion** | Smooth animations & transitions |
+| **Zustand** | Lightweight state management |
+| **Axios** | HTTP client for API calls |
+| **Lucide React** | Beautiful icon system |
+| **js-cookie** | Cookie management |
+| **jwt-decode** | JWT token decoding |
+
+### **Backend**
+| Technology | Purpose |
+|-----------|---------|
+| **Node.js** | JavaScript runtime |
+| **Express.js 5** | Web framework |
+| **TypeScript** | Type-safe JavaScript |
+| **Prisma ORM 5** | Database abstraction layer |
+| **PostgreSQL** | Production database |
+| **JWT** | Secure authentication |
+| **bcryptjs** | Password hashing |
+| **CORS** | Cross-origin resource sharing |
+
+### **Database**
+| Environment | Database |
+|-----------|----------|
+| **Local Development** | SQLite (via Prisma) |
+| **Production** | PostgreSQL (Neon) |
+
+---
+
+## 📁 Project Structure
+
+```
+UniCompass/
+│
+├── 📂 backend/
+│   ├── src/
+│   │   ├── index.ts              # Express app entry point
+│   │   ├── db.ts                 # Prisma client initialization
+│   │   ├── middleware/
+│   │   │   └── auth.ts           # JWT authentication middleware
+│   │   └── routes/
+│   │       ├── auth.ts           # User registration & login
+│   │       ├── colleges.ts       # College CRUD operations
+│   │       ├── questions.ts      # Q&A functionality
+│   │       └── saves.ts          # Save/bookmark colleges
 │   ├── prisma/
-│   │   ├── schema.prisma
-│   │   ├── seed.ts
-│   │   └── migrations/
-│   └── src/
-│       ├── middleware/
-│       ├── routes/
-│       ├── db.ts
-│       └── index.ts
-├── frontend/
-│   └── src/
-│       ├── app/
-│       ├── components/
-│       ├── lib/
-│       └── store/
+│   │   ├── schema.prisma         # Database schema
+│   │   ├── seed.ts               # Database seeding
+│   │   └── migrations/           # Migration history
+│   ├── .env                      # Local environment variables
+│   ├── .env.production           # Production environment variables
+│   ├── package.json
+│   └── tsconfig.json
+│
+├── 📂 frontend/
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── layout.tsx        # Root layout
+│   │   │   ├── page.tsx          # Home page
+│   │   │   ├── colleges/         # College discovery pages
+│   │   │   ├── compare/          # College comparison
+│   │   │   ├── questions/        # Q&A hub
+│   │   │   ├── login/            # Authentication
+│   │   │   ├── register/         # User registration
+│   │   │   ├── saved/            # Saved colleges
+│   │   │   └── about/            # About page
+│   │   ├── components/           # Reusable components
+│   │   ├── lib/                  # Utilities & API client
+│   │   ├── store/                # Zustand store
+│   │   ├── types/                # TypeScript definitions
+│   │   └── globals.css           # Global styles
+│   ├── .env.local                # Local environment variables
+│   ├── .env.production           # Production environment variables
+│   ├── package.json
+│   ├── next.config.ts
+│   └── tsconfig.json
+│
 └── README.md
+
 ```
 
-## Getting Started
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
+- **Node.js** v20 or higher
+- **npm** or **yarn**
+- **PostgreSQL** database (for production)
 
-- Node.js
-- npm
+### Local Development Setup
 
-### Backend Setup
+#### 1️⃣ Clone the Repository
+```bash
+git clone https://github.com/angelabera/UniCompass.git
+cd UniCompass
+```
 
+#### 2️⃣ Backend Setup
 ```bash
 cd backend
+
+# Install dependencies
 npm install
+
+# Generate Prisma client
 npx prisma generate
+
+# Run database migrations
 npx prisma migrate dev
+
+# Seed the database with sample data
 npx prisma db seed
+
+# Start development server
 npm run dev
 ```
 
-The backend runs on:
+Backend runs on: `http://localhost:5000`
 
-```text
-http://localhost:5000
-```
-
-### Frontend Setup
-
-Open a second terminal:
-
+#### 3️⃣ Frontend Setup
+Open a new terminal:
 ```bash
 cd frontend
+
+# Install dependencies
 npm install
+
+# Start development server
 npm run dev
 ```
 
-The frontend runs on:
+Frontend runs on: `http://localhost:3000`
 
-```text
-http://localhost:3000
-```
+#### 4️⃣ Access the Application
+Open your browser and navigate to: **`http://localhost:3000`**
 
-## Environment Variables
+---
 
-### Backend
+## 📦 Build & Deployment
 
-Create a `.env` file inside `backend/` if needed:
+### Build for Production
 
-```env
-JWT_SECRET=your_secure_jwt_secret
-PORT=5000
-```
-
-The Prisma schema currently uses a local SQLite database:
-
-```prisma
-url = "file:./dev.db"
-```
-
-### Frontend
-
-Create a `.env.local` file inside `frontend/` if your backend URL is different:
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:5000
-```
-
-## Main Pages
-
-- `/` - Home page
-- `/about` - About UniCompass
-- `/colleges` - College discovery page
-- `/colleges/[id]` - College details page
-- `/compare` - College comparison page
-- `/questions` - Q&A discussion page
-- `/saved` - Saved colleges page
-- `/login` - Login page
-- `/register` - Registration page
-
-## Available Scripts
-
-### Backend
-
+**Backend:**
 ```bash
-npm run dev
+cd backend
+npm run build
+```
+
+**Frontend:**
+```bash
+cd frontend
 npm run build
 npm start
 ```
 
-### Frontend
+### Deployment Guide
 
-```bash
-npm run dev
-npm run build
-npm start
-npm run lint
+#### **Option 1: Render + Vercel (Recommended)**
+
+**Backend Deployment (Render):**
+1. Push code to GitHub
+2. Connect GitHub repository to [render.com](https://render.com)
+3. Set build command: `npm install && npm run build && npx prisma migrate deploy && npx prisma db seed`
+4. Add environment variables:
+   ```
+   DATABASE_URL=postgresql://...
+   JWT_SECRET=your-secret-key
+   PORT=3001
+   NODE_ENV=production
+   ```
+5. Deploy!
+
+**Database Setup (Neon):**
+1. Create free PostgreSQL database at [neon.tech](https://neon.tech)
+2. Copy connection string to `DATABASE_URL` in Render
+
+**Frontend Deployment (Vercel):**
+1. Connect GitHub to [vercel.com](https://vercel.com)
+2. Select `frontend` directory
+3. Add environment variable:
+   ```
+   NEXT_PUBLIC_API_URL=https://your-render-backend-url
+   ```
+4. Deploy!
+
+#### **Option 2: Docker Deployment**
+
+```dockerfile
+# Dockerfile for backend
+FROM node:20-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+EXPOSE 3001
+CMD ["npm", "start"]
 ```
 
-## Notes
+---
 
-- Users must be logged in to save colleges, ask questions, and answer questions.
-- The dark mode preference is saved in the browser using `localStorage`.
-- The frontend expects the backend API to be available at `http://localhost:5000` unless `NEXT_PUBLIC_API_URL` is configured.
+## 🗄️ Database Schema
 
-Author: Angela Bera  
-Github: https://github.com/angelabera
+### Key Models
+- **User**: Student accounts with authentication
+- **College**: Institution information and metadata
+- **Course**: Programs offered by colleges
+- **Placement**: Placement statistics and data
+- **SavedCollege**: User's bookmarked colleges
+- **Question**: Student questions about colleges
+- **Answer**: Responses to student questions
+
+---
+
+## 🔐 Environment Variables
+
+### Backend (.env.production)
+```env
+DATABASE_URL=postgresql://user:password@host/database
+JWT_SECRET=your-secure-secret-key
+PORT=3001
+NODE_ENV=production
+```
+
+### Frontend (.env.production)
+```env
+NEXT_PUBLIC_API_URL=https://your-backend-url.com
+```
+
+---
+
+## 📝 API Endpoints
+
+### Authentication
+- `POST /auth/register` - User registration
+- `POST /auth/login` - User login
+
+### Colleges
+- `GET /colleges` - List all colleges with filters
+- `GET /colleges/:id` - Get college details
+- `GET /colleges/compare` - Compare multiple colleges
+
+### Q&A
+- `GET /questions` - Get all questions
+- `POST /questions` - Create new question
+- `POST /questions/:id/answers` - Add answer
+
+### Saves
+- `GET /save` - Get saved colleges
+- `POST /save` - Save a college
+- `DELETE /save/:id` - Remove saved college
+
+---
+
+
+## 📄 License
+
+This project is licensed under the ISC License.
+
+---
+
+## 👨‍💻 Author
+
+**Angela Bera**
+
+---
+
+## 🙏 Acknowledgments
+
+- Built with ❤️ for students seeking their perfect college
+- Inspired by the need for better college discovery tools
+- Thanks to all contributors and users!
+
+
+---
+
+**Happy College Hunting! 🎓✨**
