@@ -89,13 +89,16 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45, delay: 0.35 + idx * 0.08 }}
-              className="premium-card group rounded-2xl p-6 transition-all hover:-translate-y-1 hover:shadow-xl"
+              className="premium-card group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:-translate-y-2 hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-500/15 dark:hover:border-blue-900/70"
             >
-              <div className={`mb-5 flex h-12 w-12 items-center justify-center rounded-xl border ${feature.color}`}>
+              <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-600 via-teal-500 to-orange-400 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-gradient-to-br from-blue-500/15 to-teal-500/15 opacity-0 blur-2xl transition-all duration-500 group-hover:opacity-100 group-hover:scale-125" />
+              <div className={`relative mb-5 flex h-12 w-12 items-center justify-center rounded-xl border transition-all duration-300 group-hover:scale-110 group-hover:-rotate-3 group-hover:shadow-lg ${feature.color}`}>
                 <Icon className="h-5 w-5" />
               </div>
-              <h3 className="mb-2 text-lg font-bold text-foreground">{feature.title}</h3>
-              <p className="text-sm leading-7 text-muted-foreground">{feature.text}</p>
+              <h3 className="relative mb-2 text-lg font-bold text-foreground transition-colors duration-300 group-hover:text-blue-700 dark:group-hover:text-blue-300">{feature.title}</h3>
+              <p className="relative text-sm leading-7 text-muted-foreground transition-colors duration-300 group-hover:text-foreground/85">{feature.text}</p>
+              <div className="relative mt-5 h-0.5 w-10 rounded-full bg-gradient-to-r from-blue-600 to-teal-500 opacity-0 transition-all duration-300 group-hover:w-20 group-hover:opacity-100" />
             </motion.div>
           );
         })}
