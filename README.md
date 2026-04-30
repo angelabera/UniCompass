@@ -1,76 +1,171 @@
-# UniCompass - College Discovery Platform
+# UniCompass
 
-UniCompass is a modern, production-grade full-stack web application designed to help students discover, compare, and shortlist top colleges. 
+UniCompass is a full-stack college discovery platform built to help students explore institutions, compare options, save favorites, and ask practical questions before making education decisions.
+
+The app combines a modern Next.js frontend with an Express and Prisma backend, using a clean responsive UI, authentication, dark mode, and a student-focused Q&A experience.
 
 ## Features
-- **College Discovery**: Browse colleges with search, pagination, and location/fee filters.
-- **Compare Tool**: Select up to 3 colleges to compare their placements, fees, ratings, and location side-by-side.
-- **College Details**: View comprehensive data including overviews, courses, and placement statistics.
-- **User Authentication**: Secure JWT-based login and registration.
-- **Saved List**: Registered users can save colleges to their personalized list.
-- **Premium UI**: Modern glassmorphism design with animated gradient backgrounds and responsive layout.
+
+- **College Discovery**: Browse colleges with search, pagination, location filters, fee filters, and college type filters.
+- **College Details**: View individual college pages with overview, courses, ratings, and placement statistics.
+- **Compare Colleges**: Compare multiple institutions side by side using important decision factors.
+- **Student Q&A**: Ask questions, answer questions, and view discussions from other students.
+- **Authentication**: Register and log in with JWT-based authentication.
+- **Saved Colleges**: Save colleges to a personal shortlist after logging in.
+- **Dark Mode**: Toggle between light and dark themes with persistent preference.
+- **Responsive UI**: Modern gradient-based interface with glass panels, polished cards, and mobile-friendly layouts.
+- **About Page and Footer**: Informational About page and a styled footer matching the visual identity of the site.
 
 ## Tech Stack
-- **Frontend**: Next.js (App Router), Tailwind CSS, Framer Motion, Zustand, Axios
-- **Backend**: Node.js, Express.js, TypeScript, Prisma ORM
-- **Database**: PostgreSQL
 
----
+### Frontend
 
-## Local Development Setup
+- Next.js App Router
+- React
+- TypeScript
+- Tailwind CSS
+- Framer Motion
+- Zustand
+- Axios
+- Lucide React Icons
 
-### 1. Database Configuration
-1. For local development, the app uses an out-of-the-box SQLite database (`dev.db`). No setup is required.
-2. If you'd like to switch to PostgreSQL, update `provider = "postgresql"` in `prisma/schema.prisma` and add your `DATABASE_URL` in `backend/.env`.
+### Backend
 
-### 2. Backend Setup
+- Node.js
+- Express.js
+- TypeScript
+- Prisma ORM
+- JWT authentication
+- bcrypt password hashing
+
+### Database
+
+- SQLite for local development through Prisma
+
+## Project Structure
+
+```text
+UniCo/
+├── backend/
+│   ├── prisma/
+│   │   ├── schema.prisma
+│   │   ├── seed.ts
+│   │   └── migrations/
+│   └── src/
+│       ├── middleware/
+│       ├── routes/
+│       ├── db.ts
+│       └── index.ts
+├── frontend/
+│   └── src/
+│       ├── app/
+│       ├── components/
+│       ├── lib/
+│       └── store/
+└── README.md
+```
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js
+- npm
+
+### Backend Setup
+
 ```bash
 cd backend
 npm install
-npx prisma db push
-npm run prisma:seed
+npx prisma generate
+npx prisma migrate dev
+npx prisma db seed
 npm run dev
 ```
-The backend server will start on `http://localhost:5000`.
 
-### 3. Frontend Setup
-Open a new terminal window:
+The backend runs on:
+
+```text
+http://localhost:5000
+```
+
+### Frontend Setup
+
+Open a second terminal:
+
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-The frontend will start on `http://localhost:3000`.
 
----
+The frontend runs on:
 
-## Deployment Instructions
+```text
+http://localhost:3000
+```
 
-### Database (Supabase / Neon)
-1. Create a free PostgreSQL database on [Neon](https://neon.tech) or [Supabase](https://supabase.com).
-2. Copy the provided connection string.
+## Environment Variables
 
-### Backend (Render / Railway)
-1. Push your repository to GitHub.
-2. Create a new Web Service on [Render](https://render.com) or [Railway](https://railway.app).
-3. Set the Root Directory to `backend`.
-4. Build Command: `npm install && npx prisma generate && npx tsc`
-5. Start Command: `node dist/index.js`
-6. Environment Variables:
-   - `DATABASE_URL`: Your production database URL from Neon/Supabase.
-   - `JWT_SECRET`: A secure random string for authentication.
-   - `PORT`: 5000 (Render typically overrides this, which is fine).
-7. Deploy the backend and copy the live URL.
+### Backend
 
-### Database Migration in Production
-Once your database is configured in your backend service, you can run migrations by adding a script to your `package.json` or by temporarily running `npx prisma db push` and `npx prisma db seed` connected to the production URL.
+Create a `.env` file inside `backend/` if needed:
 
-### Frontend (Vercel)
-1. Go to [Vercel](https://vercel.com) and import your GitHub repository.
-2. Set the Root Directory to `frontend`.
-3. Framework Preset: Next.js.
-4. Environment Variables:
-   - `NEXT_PUBLIC_API_URL`: The live URL of your deployed backend service.
-5. Deploy the application.
+```env
+JWT_SECRET=your_secure_jwt_secret
+PORT=5000
+```
 
-Enjoy using UniCompass!
+The Prisma schema currently uses a local SQLite database:
+
+```prisma
+url = "file:./dev.db"
+```
+
+### Frontend
+
+Create a `.env.local` file inside `frontend/` if your backend URL is different:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000
+```
+
+## Main Pages
+
+- `/` - Home page
+- `/about` - About UniCompass
+- `/colleges` - College discovery page
+- `/colleges/[id]` - College details page
+- `/compare` - College comparison page
+- `/questions` - Q&A discussion page
+- `/saved` - Saved colleges page
+- `/login` - Login page
+- `/register` - Registration page
+
+## Available Scripts
+
+### Backend
+
+```bash
+npm run dev
+npm run build
+npm start
+```
+
+### Frontend
+
+```bash
+npm run dev
+npm run build
+npm start
+npm run lint
+```
+
+## Notes
+
+- Users must be logged in to save colleges, ask questions, and answer questions.
+- The dark mode preference is saved in the browser using `localStorage`.
+- The frontend expects the backend API to be available at `http://localhost:5000` unless `NEXT_PUBLIC_API_URL` is configured.
+
+Author: Angela Bera  
+Github: https://github.com/angelabera
