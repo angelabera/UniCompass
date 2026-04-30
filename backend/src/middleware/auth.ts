@@ -5,6 +5,9 @@ const JWT_SECRET = process.env.JWT_SECRET || 'supersecretjwtkeyforunicompass';
 
 export interface AuthRequest extends Request {
   userId?: string;
+  headers: Request['headers'];
+  body: any;
+  params: Request['params'];
 }
 
 export const authenticate = (req: AuthRequest, res: Response, next: NextFunction) => {
