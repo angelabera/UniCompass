@@ -16,13 +16,13 @@ export default function ComparePage() {
 
   useEffect(() => {
     const fetchSearch = async () => {
-      if (search.length < 2) {
+      if (search.length < 1) {
         setSearchResults([]);
         return;
       }
       setIsSearching(true);
       try {
-        const response = await api.get(`/colleges?search=${search}&limit=5`);
+        const response = await api.get(`/colleges?search=${search}&limit=100`);
         setSearchResults(response.data.data.filter((c: any) => !selectedIds.includes(c.id)));
       } catch (error) {
         console.error("Error searching colleges:", error);
