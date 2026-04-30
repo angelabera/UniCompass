@@ -3,7 +3,7 @@
     "target": "es2020",
     "module": "commonjs",
     "types": ["node"],
-    "rootDir": "./src",
+    "rootDir": "./",
     "outDir": "./dist",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -12,5 +12,5 @@
     "resolveJsonModule": true,
     "moduleResolution": "bundler"
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "prisma/**/*"]
 }
