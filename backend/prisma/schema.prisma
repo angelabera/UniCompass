@@ -26,6 +26,7 @@ model College {
   imageUrl    String?
   rating      Float?
   fees        Float? // Average annual fees
+  type        String   @default("Government") // Government or Private
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   courses     Course[]

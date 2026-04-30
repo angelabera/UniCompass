@@ -14,6 +14,7 @@ interface College {
   imageUrl: string;
   rating: number;
   fees: number;
+  type: string;
 }
 
 export default function CollegesPage() {
@@ -26,6 +27,7 @@ export default function CollegesPage() {
   const [debouncedSearch] = useDebounce(search, 500);
   const [location, setLocation] = useState("");
   const [maxFees, setMaxFees] = useState("");
+  const [collegeType, setCollegeType] = useState("");
   
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -43,7 +45,8 @@ export default function CollegesPage() {
         limit: "9",
         ...(debouncedSearch && { search: debouncedSearch }),
         ...(location && { location }),
-        ...(maxFees && { maxFees })
+        ...(maxFees && { maxFees }),
+        ...(collegeType && { type: collegeType })
       });
       
       const response = await api.get(`/colleges?${params}`);
@@ -59,12 +62,12 @@ export default function CollegesPage() {
   useEffect(() => {
     if (!mounted) return;
     setPage(1);
-  }, [debouncedSearch, location, maxFees, mounted]);
+  }, [debouncedSearch, location, maxFees, collegeType, mounted]);
 
   useEffect(() => {
     if (!mounted) return;
     fetchColleges();
-  }, [debouncedSearch, location, maxFees, page, mounted]);
+  }, [debouncedSearch, location, maxFees, collegeType, page, mounted]);
 
   return (
     <div className="py-8">
@@ -106,6 +109,16 @@ export default function CollegesPage() {
               
               <select
                 className="block w-full md:w-48 pl-3 pr-10 py-2.5 bg-background border border-border text-sm rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-colors appearance-none"
+                value={collegeType}
+                onChange={(e) => setCollegeType(e.target.value)}
+              >
+                <option value="">All Types</option>
+                <option value="Government">Government</option>
+                <option value="Private">Private</option>
+              </select>
+              
+              <select
+                className="block w-full md:w-48 pl-3 pr-10 py-2.5 bg-background border border-border text-sm rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-colors appearance-none"
                 value={maxFees}
                 onChange={(e) => setMaxFees(e.target.value)}
               >
@@ -115,9 +128,9 @@ export default function CollegesPage() {
                 <option value="500000">Under ₹5L / year</option>
               </select>
 
-              {(search || location || maxFees) && (
+              {(search || location || maxFees || collegeType) && (
                 <button 
-                  onClick={() => { setSearch(""); setLocation(""); setMaxFees(""); }}
+                  onClick={() => { setSearch(""); setLocation(""); setMaxFees(""); setCollegeType(""); }}
                   className="p-2.5 text-muted-foreground hover:text-foreground bg-background border border-border rounded-md hover:bg-muted transition-colors flex-shrink-0 shadow-sm flex items-center justify-center"
                   title="Clear filters"
                 >
@@ -163,6 +176,11 @@ export default function CollegesPage() {
                   <div className="absolute top-3 right-3 bg-background/90 backdrop-blur-sm px-2.5 py-1 rounded-md border border-border shadow-sm flex items-center space-x-1 font-medium text-xs text-foreground">
                     <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
                     <span>{college.rating || "N/A"}</span>
+                  </div>
+                  <div className="absolute top-3 left-3 bg-background/90 backdrop-blur-sm px-2.5 py-1 rounded-md border border-border shadow-sm font-medium text-xs">
+                    <span className={college.type === "Government" ? "text-blue-600 dark:text-blue-400" : "text-purple-600 dark:text-purple-400"}>
+                      {college.type}
+                    </span>
                   </div>
                 </div>
                 <div className="p-5 flex-grow flex flex-col">

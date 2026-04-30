@@ -6,7 +6,7 @@ const router = Router();
 // GET /colleges (with search, filter, pagination)
 router.get('/', async (req, res) => {
   try {
-    const { search, location, maxFees, page = '1', limit = '10' } = req.query;
+    const { search, location, maxFees, type, page = '1', limit = '10' } = req.query;
     const pageNumber = parseInt(page as string);
     const limitNumber = parseInt(limit as string);
     const skip = (pageNumber - 1) * limitNumber;
@@ -29,6 +29,10 @@ router.get('/', async (req, res) => {
       whereClause.fees = {
         lte: parseFloat(maxFees as string)
       };
+    }
+
+    if (type && type !== 'All Types') {
+      whereClause.type = type as string;
     }
 
     const colleges = await prisma.college.findMany({
