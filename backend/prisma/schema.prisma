@@ -15,6 +15,8 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   savedColleges SavedCollege[]
+  questions     Question[]
+  answers       Answer[]
 }
 
 model College {
@@ -32,6 +34,30 @@ model College {
   courses     Course[]
   placements  Placement[]
   savedBy     SavedCollege[]
+  questions   Question[]
+}
+
+model Question {
+  id        String   @id @default(cuid())
+  content   String
+  userId    String
+  collegeId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  college   College? @relation(fields: [collegeId], references: [id])
+  answers   Answer[]
+}
+
+model Answer {
+  id         String   @id @default(cuid())
+  content    String
+  userId     String
+  questionId String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id])
+  question   Question @relation(fields: [questionId], references: [id])
 }
 
 model Course {

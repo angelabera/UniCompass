@@ -30,6 +30,9 @@ export default function Navbar() {
             <Link href="/compare" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
               Compare
             </Link>
+            <Link href="/questions" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+              Q&A
+            </Link>
           </div>
 
           <div className="flex items-center space-x-4">

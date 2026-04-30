@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
 import collegeRoutes from './routes/colleges';
 import saveRoutes from './routes/saves';
+import questionRoutes from './routes/questions';
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use('/auth', authRoutes);
 app.use('/colleges', collegeRoutes);
 app.use('/save', saveRoutes);
+app.use('/questions', questionRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

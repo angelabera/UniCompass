@@ -9,6 +9,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const auth_1 = __importDefault(require("./routes/auth"));
 const colleges_1 = __importDefault(require("./routes/colleges"));
 const saves_1 = __importDefault(require("./routes/saves"));
+const questions_1 = __importDefault(require("./routes/questions"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 5000;
@@ -18,6 +19,7 @@ app.use(express_1.default.json());
 app.use('/auth', auth_1.default);
 app.use('/colleges', colleges_1.default);
 app.use('/save', saves_1.default);
+app.use('/questions', questions_1.default);
 // Health check
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok', message: 'UniCompass API is running' });
