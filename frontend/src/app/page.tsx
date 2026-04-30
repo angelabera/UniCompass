@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Search, TrendingUp, MessageCircle, Sparkles } from "lucide-react";
+import { ArrowRight, Search, TrendingUp, MessageCircle, Sparkles, Info } from "lucide-react";
 
 export default function Home() {
   const features = [
@@ -68,6 +68,12 @@ export default function Home() {
               <Link href="/colleges" className="w-full sm:w-auto">
                 <button className="btn-primary flex h-12 w-full min-w-48 items-center justify-center rounded-full px-7 text-sm font-semibold transition-all sm:w-auto">
                   Explore Colleges <ArrowRight className="ml-2 h-4 w-4" />
+                </button>
+              </Link>
+              <Link href="/about" className="w-full sm:w-auto">
+                <button className="flex h-12 w-full min-w-40 items-center justify-center rounded-full border border-border bg-white/75 px-7 text-sm font-semibold text-foreground shadow-sm backdrop-blur transition-all hover:-translate-y-0.5 hover:bg-white hover:shadow-md sm:w-auto dark:bg-slate-950/70 dark:hover:bg-slate-900">
+                  <Info className="mr-2 h-4 w-4 text-blue-600" />
+                  Learn More
                 </button>
               </Link>
             </motion.div>
