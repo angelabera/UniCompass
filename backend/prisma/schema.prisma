@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  savedColleges SavedCollege[]
+}
+
+model College {
+  id          String   @id @default(cuid())
+  name        String
+  location    String
+  description String?
+  logo        String?
+  imageUrl    String?
+  rating      Float?
+  fees        Float? // Average annual fees
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  courses     Course[]
+  placements  Placement[]
+  savedBy     SavedCollege[]
+}
+
+model Course {
+  id        String   @id @default(cuid())
+  name      String
+  duration  String
+  fees      Float?
+  collegeId String
+  college   College  @relation(fields: [collegeId], references: [id])
+}
+
+model Placement {
+  id             String   @id @default(cuid())
+  year           Int
+  highestPackage Float?
+  averagePackage Float?
+  placementPercentage Float?
+  collegeId      String
+  college        College  @relation(fields: [collegeId], references: [id])
+}
+
+model SavedCollege {
+  id        String   @id @default(cuid())
+  userId    String
+  collegeId String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  college   College  @relation(fields: [collegeId], references: [id])
+
+  @@unique([userId, collegeId])
+}
