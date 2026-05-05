@@ -15,9 +15,10 @@
 6. [Community & Content](#5-community--content)
 7. [User Features](#6-user-features)
 8. [Admin & Metadata Pages](#7-admin--metadata-pages)
-9. [Data Flow Architecture](#8-data-flow-architecture)
-10. [Routing Map](#9-routing-map)
-11. [Future Roadmap](#10-future-roadmap)
+9. [Data Model & Database Schema](#8-data-model--database-schema)
+10. [Data Flow Architecture](#9-data-flow-architecture)
+11. [Routing Map](#10-routing-map)
+12. [Future Roadmap](#11-future-roadmap)
 
 ---
 
@@ -1781,7 +1782,894 @@ SavedCollege:
 
 ---
 
-## 8. Data Flow Architecture
+## 8. Data Model & Database Schema
+
+### 8.1 Entity Relationship Diagram
+
+```
+┌─────────────────┐
+│      User       │
+│─────────────────│
+│ id (PK)         │
+│ email (UNIQUE)  │
+│ name            │
+│ password        │
+│ createdAt       │
+│ updatedAt       │
+└────────┬────────┘
+         │
+         ├─────────────────┬──────────────────┬──────────────────┐
+         │                 │                  │                  │
+    (1:N)│(1:N)        (1:N)│(1:N)         (1:N)│(1:N)         (1:N)│(1:N)
+         │                 │                  │                  │
+         ↓                 ↓                  ↓                  ↓
+  ┌─────────────┐   ┌──────────────┐  ┌────────────┐   ┌────────────────┐
+  │SavedCollege │   │  Question    │  │  Answer    │   │    Review      │
+  │─────────────│   │──────────────│  │────────────│   │────────────────│
+  │ id (PK)     │   │ id (PK)      │  │ id (PK)    │   │ id (PK)        │
+  │ userId (FK) │   │ userId (FK)  │  │ userId(FK) │   │ userId (FK)    │
+  │ collegeId   │   │ collegeId(FK)│  │ questionId │   │ collegeId (FK) │
+  │ createdAt   │   │ content      │  │ (FK)       │   │ rating         │
+  │ notes       │   │ tags         │  │ content    │   │ reviewText     │
+  │ tags        │   │ createdAt    │  │ upvotes    │   │ helpful        │
+  │             │   │ viewCount    │  │ downvotes  │   │ createdAt      │
+  │             │   │ answerCount  │  │ createdAt  │   │                │
+  └──────┬──────┘   └──────┬───────┘  └──────┬─────┘   └────────┬───────┘
+         │                 │                 │                  │
+         │                 ├────────────────┐│                  │
+         │                 │                ││                  │
+         └─────────────────┼────────────────┼┼──────────────────┘
+                           │                ││
+                           │ (1:N)      (1:N)││ (1:N)
+                           │                ││
+                           ↓                ↓↓
+                      ┌─────────────────────────────┐
+                      │       College              │
+                      │────────────────────────────│
+                      │ id (PK)                    │
+                      │ name                       │
+                      │ location (city, state)     │
+                      │ type (Gov/Private)         │
+                      │ fees                       │
+                      │ rating                     │
+                      │ placementRate              │
+                      │ avgSalary                  │
+                      │ maxSalary                  │
+                      │ minSalary                  │
+                      │ website                    │
+                      │ phone                      │
+                      │ email                      │
+                      │ address                    │
+                      │ yearEstablished            │
+                      │ totalStudents              │
+                      │ facultyCount               │
+                      │ companyList (JSON)         │
+                      │ createdAt                  │
+                      │ updatedAt                  │
+                      └──────────────┬─────────────┘
+                                     │
+                                     ├─────────────────┬────────────────┐
+                                     │                 │                │
+                                 (1:N)│ (1:N)      (1:N)│(1:N)       (1:N)│(1:N)
+                                     │                 │                │
+                                     ↓                 ↓                ↓
+                              ┌────────────┐   ┌─────────────┐  ┌──────────────┐
+                              │   Course   │   │  Placement  │  │   Exam      │
+                              │────────────│   │─────────────│  │──────────────│
+                              │ id (PK)    │   │ id (PK)     │  │ id (PK)     │
+                              │ collegeId  │   │ collegeId   │  │ collegeId   │
+                              │ (FK)       │   │ (FK)        │  │ (FK)        │
+                              │ name       │   │ courseId    │  │ name        │
+                              │ stream     │   │ (FK)        │  │ type        │
+                              │ duration   │   │ year        │  │ score       │
+                              │ fees       │   │ placedCount │  │ cutoff      │
+                              │ seats      │   │ avgSalary   │  │ percentile  │
+                              │ maxSalary  │   │ maxSalary   │  │ createdAt   │
+                              │ createdAt  │   │ topCompany  │  │             │
+                              └────────────┘   │ createdAt   │  └──────────────┘
+                                               └─────────────┘
+```
+
+---
+
+### 8.2 Core Entities
+
+#### **User**
+Represents authenticated platform users
+
+```prisma
+model User {
+  id            String @id @default(cuid())
+  email         String @unique @db.String(255)
+  name          String @db.String(255)
+  password      String @db.String(255)
+  avatar        String? @db.String(500)
+  bio           String? @db.String(1000)
+  phoneNumber   String? @db.String(20)
+  location      String? @db.String(255)
+  
+  // Account metadata
+  emailVerified DateTime?
+  lastLogin     DateTime?
+  loginCount    Int @default(0)
+  status        String @default("active") // active, inactive, suspended
+  
+  // Timestamps
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Relations
+  savedColleges  SavedCollege[]
+  questions      Question[]
+  answers        Answer[]
+  reviews        Review[]
+  predictor      PredictionResult[]
+  finder         FinderResult[]
+  
+  // Indexes
+  @@index([email])
+  @@index([createdAt])
+}
+```
+
+**Key Fields:**
+- `id`: Unique identifier (CUID)
+- `email`: Unique email for login (indexed)
+- `password`: Hashed with bcrypt
+- `emailVerified`: For email verification flow (Planned)
+- `loginCount`, `lastLogin`: Engagement metrics
+- `status`: Account status (active/inactive/suspended)
+
+---
+
+#### **College**
+Core college/institution entity
+
+```prisma
+model College {
+  id                String @id @default(cuid())
+  name              String @unique @db.String(255)
+  location          String @db.String(255) // "city, state"
+  city              String @db.String(100)
+  state             String @db.String(100)
+  
+  // Classification
+  type              String @db.String(50) // "Government" or "Private"
+  established       Int?
+  website           String? @db.String(500)
+  
+  // Contact
+  phone             String? @db.String(20)
+  email             String? @db.String(255)
+  address           String? @db.String(500)
+  latitude          Float?
+  longitude         Float?
+  
+  // Financial
+  fees              Float? // total fees
+  feesPerSemester   Float?
+  hostelFees        Float?
+  
+  // Academic Stats
+  totalStudents     Int?
+  facultyCount      Int?
+  studentTeacherRatio Float?
+  
+  // Placement & Career
+  placementRate     Float? // percentage (0-100)
+  avgSalary         Float?
+  maxSalary         Float?
+  minSalary         Float?
+  medianSalary      Float?
+  salaryGrowth      Float? // YoY percentage
+  placedStudents    Int?
+  topRecruiter      String?
+  companyList       String @default("[]") // JSON array
+  industries        String @default("[]") // JSON array
+  
+  // Ratings & Reviews
+  rating            Float @default(0) // 0-5
+  reviewCount       Int @default(0)
+  ratingCount       Int @default(0)
+  
+  // Metadata
+  savedCount        Int @default(0) // denormalized count
+  viewCount         Int @default(0)
+  searchRank        Int? // for ranking pages
+  isFeatured        Boolean @default(false)
+  
+  // Timestamps
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Relations
+  savedBy           SavedCollege[]
+  questions         Question[]
+  answers           Answer[]
+  reviews           Review[]
+  courses           Course[]
+  placements        Placement[]
+  exams             Exam[]
+  
+  // Indexes
+  @@unique([name])
+  @@index([location])
+  @@index([type])
+  @@index([city])
+  @@index([state])
+  @@index([rating])
+  @@index([placementRate])
+  @@index([createdAt])
+  @@fulltext([name, city, state]) // for search
+}
+```
+
+**Key Fields:**
+- `id`: Unique identifier
+- `name`: Unique college name (indexed for search)
+- `type`: Government/Private (indexed for filtering)
+- `fees`: Total fees (used for filtering)
+- `placementRate`: Placement percentage (indexed for sorting)
+- `rating`: Average rating (0-5, indexed)
+- `savedCount`: Denormalized count for fast query
+- `companyList`, `industries`: JSON arrays for recruitment data
+
+---
+
+#### **SavedCollege**
+User's bookmarked/shortlisted colleges
+
+```prisma
+model SavedCollege {
+  id        String @id @default(cuid())
+  userId    String
+  collegeId String
+  
+  // Optional metadata
+  notes     String? @db.String(1000)
+  tags      String @default("[]") // JSON array
+  priority  Int @default(0) // 0=low, 1=medium, 2=high
+  status    String @default("interested") // interested, shortlisted, rejected, accepted
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  college   College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+  
+  // Constraints
+  @@unique([userId, collegeId]) // prevent duplicates
+  @@index([userId])
+  @@index([collegeId])
+  @@index([createdAt])
+  @@index([status])
+}
+```
+
+**Key Fields:**
+- `userId, collegeId`: Foreign keys (unique constraint prevents duplicates)
+- `notes`: User notes about college
+- `tags`: User-defined tags (JSON)
+- `status`: Tracking through decision journey
+- `priority`: Help with ranking saved colleges
+
+---
+
+#### **Question**
+User-generated Q&A posts
+
+```prisma
+model Question {
+  id        String @id @default(cuid())
+  title     String @db.String(255)
+  content   String @db.Text
+  userId    String
+  collegeId String
+  
+  // Metadata
+  tags      String @default("[]") // JSON array
+  category  String? @db.String(100) // "admission", "course", "placement", etc.
+  
+  // Engagement
+  viewCount Int @default(0)
+  upvotes   Int @default(0)
+  downvotes Int @default(0)
+  
+  // Answer tracking
+  answerCount Int @default(0) // denormalized
+  hasAcceptedAnswer Boolean @default(false)
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  lastActivityAt DateTime @default(now()) // for "trending" sorting
+  
+  // Relations
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  college   College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+  answers   Answer[]
+  
+  // Indexes
+  @@index([userId])
+  @@index([collegeId])
+  @@index([createdAt])
+  @@index([lastActivityAt])
+  @@index([answerCount])
+  @@fulltext([title, content]) // for search
+}
+```
+
+**Key Fields:**
+- `title`: Question title (full-text indexed)
+- `content`: Question description
+- `tags`: Categorization (JSON)
+- `viewCount`, `upvotes`: Engagement metrics
+- `answerCount`: Denormalized for sorting
+- `lastActivityAt`: For "trending" vs "newest" sorting
+
+---
+
+#### **Answer**
+Responses to questions
+
+```prisma
+model Answer {
+  id         String @id @default(cuid())
+  content    String @db.Text
+  userId     String
+  questionId String
+  
+  // Engagement
+  upvotes    Int @default(0)
+  downvotes  Int @default(0)
+  
+  // Acceptance
+  isAccepted Boolean @default(false)
+  
+  // Media (Planned)
+  attachments String @default("[]") // JSON array of URLs
+  
+  // Timestamps
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  // Relations
+  user       User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  
+  // Indexes
+  @@index([userId])
+  @@index([questionId])
+  @@index([createdAt])
+}
+```
+
+**Key Fields:**
+- `questionId`: Foreign key to question
+- `isAccepted`: Marks best answer
+- `upvotes`, `downvotes`: Community voting
+
+---
+
+#### **Review**
+User reviews for colleges
+
+```prisma
+model Review {
+  id        String @id @default(cuid())
+  userId    String
+  collegeId String
+  
+  // Rating & Content
+  rating    Int // 1-5 stars
+  title     String @db.String(255)
+  content   String @db.Text
+  
+  // Categorized ratings (Planned)
+  academicsRating Float?
+  placementsRating Float?
+  facilitiesRating Float?
+  campusLifeRating Float?
+  valueForMoneyRating Float?
+  
+  // Student Info (Planned)
+  studentStream String? // Engineering, Commerce, etc.
+  graduationYear Int?
+  
+  // Engagement
+  helpful   Int @default(0)
+  notHelpful Int @default(0)
+  
+  // Moderation (Planned)
+  status    String @default("approved") // approved, pending, rejected
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  college   College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+  
+  // Indexes
+  @@index([userId])
+  @@index([collegeId])
+  @@index([rating])
+  @@index([createdAt])
+}
+```
+
+**Key Fields:**
+- `rating`: 1-5 star rating
+- `academicsRating`, `placementsRating`, etc.: Detailed ratings
+- `helpful`, `notHelpful`: Review usefulness tracking
+
+---
+
+#### **Course**
+Academic programs offered by colleges
+
+```prisma
+model Course {
+  id        String @id @default(cuid())
+  collegeId String
+  
+  // Basic Info
+  name      String @db.String(255)
+  stream    String @db.String(100) // Engineering, Commerce, Arts, etc.
+  specialization String? @db.String(255) // CSE, ECE, Mechanical, etc.
+  
+  // Duration & Capacity
+  duration  String @db.String(50) // "2 years", "4 years"
+  durationMonths Int? // for sorting
+  totalSeats Int?
+  enrolledSeats Int?
+  
+  // Financial
+  totalFees Float?
+  annualFees Float?
+  semesterFees Float?
+  
+  // Placement Data
+  placementRate Float?
+  avgSalary Float?
+  maxSalary Float?
+  minSalary Float?
+  topRecruiter String?
+  
+  // Eligibility (Planned)
+  eligibility String? @db.Text
+  prerequisiteCourses String? @default("[]") // JSON
+  
+  // Additional Info
+  accreditations String? @default("[]") // JSON
+  specializations String? @default("[]") // JSON
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  college   College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+  placements Placement[]
+  exams     Exam[]
+  
+  // Indexes
+  @@index([collegeId])
+  @@index([stream])
+  @@index([specialization])
+  @@index([placementRate])
+}
+```
+
+**Key Fields:**
+- `collegeId`: Foreign key
+- `stream`: Engineering, Commerce, Arts
+- `durationMonths`: For sorting/filtering
+- `totalSeats`, `enrolledSeats`: Capacity tracking
+- `placementRate`, `avgSalary`: Per-course metrics
+
+---
+
+#### **Placement**
+Historical placement data by year/course
+
+```prisma
+model Placement {
+  id        String @id @default(cuid())
+  collegeId String
+  courseId  String?
+  
+  // Placement Details
+  year      Int // academic year
+  placedCount Int
+  totalStudents Int
+  placementRate Float // calculated percentage
+  
+  // Salary Info
+  avgSalary Float?
+  medianSalary Float?
+  maxSalary Float?
+  minSalary Float?
+  salaryRange String? // "10-50 LPA"
+  
+  // Recruitment
+  companiesRecruited Int?
+  topRecruiters String? @default("[]") // JSON array
+  industries String? @default("[]") // JSON array
+  rolesOffered String? @default("[]") // JSON array
+  
+  // Additional Stats
+  internshipRate Float?
+  higherStudies Int? // students pursuing further studies
+  entrepreneurship Int? // students starting ventures
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  college   College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+  course    Course? @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  
+  // Indexes
+  @@index([collegeId])
+  @@index([year])
+  @@index([courseId])
+  @@unique([collegeId, courseId, year]) // prevent duplicates
+}
+```
+
+**Key Fields:**
+- `year`: Academic year for trend analysis
+- `placedCount`, `totalStudents`: For rate calculation
+- `avgSalary`, `medianSalary`, `maxSalary`: Salary metrics
+- `companiesRecruited`, `topRecruiters`: Recruitment data
+
+---
+
+#### **Exam**
+Entrance exams associated with colleges
+
+```prisma
+model Exam {
+  id        String @id @default(cuid())
+  collegeId String
+  courseId  String?
+  
+  // Exam Info
+  name      String @db.String(255) // JEE Main, NEET, etc.
+  type      String @db.String(100)
+  year      Int // admission year
+  
+  // Cutoff Info
+  cutoffScore Float?
+  cutoffPercentile Float?
+  cutoffRank Int?
+  category  String? // General, OBC, SC, ST, etc.
+  
+  // Additional Info
+  totalApplicants Int?
+  selectedCandidates Int?
+  totalSeats Int?
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  college   College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+  course    Course? @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  
+  // Indexes
+  @@index([collegeId])
+  @@index([year])
+  @@index([courseId])
+  @@index([name])
+}
+```
+
+**Key Fields:**
+- `name`: JEE/NEET/Board exam type
+- `cutoffScore`, `cutoffPercentile`, `cutoffRank`: Admission thresholds
+- `year`: For historical tracking
+- `category`: Reserved category information
+
+---
+
+### 8.3 Future Entities (Planned)
+
+#### **PredictionResult** (Planned)
+Stores user predictions from the predictor tool
+
+```prisma
+model PredictionResult {
+  id        String @id @default(cuid())
+  userId    String?
+  
+  // Input Data
+  examType  String // JEE, NEET, Board
+  score     Float
+  rank      Int?
+  percentile Float?
+  stream    String
+  
+  // Preferences
+  preferredLocations String @default("[]") // JSON
+  budgetMin Float?
+  budgetMax Float?
+  
+  // Results
+  predictions String @db.Text // JSON array of {collegeId, chance, category}
+  savedForLater Boolean @default(false)
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  user      User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  // Indexes
+  @@index([userId])
+  @@index([createdAt])
+}
+```
+
+---
+
+#### **FinderResult** (Planned)
+Results from the college finder questionnaire
+
+```prisma
+model FinderResult {
+  id        String @id @default(cuid())
+  userId    String?
+  
+  // Questionnaire Responses
+  budgetMin Float?
+  budgetMax Float?
+  locations String @default("[]") // JSON
+  stream    String?
+  maxDistance Float?
+  
+  // Weighted Scores
+  responses String @db.Text // JSON of all responses
+  
+  // Results
+  recommendations String @db.Text // JSON array of recommended colleges
+  savedForLater Boolean @default(false)
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  user      User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  // Indexes
+  @@index([userId])
+  @@index([createdAt])
+}
+```
+
+---
+
+#### **Article** (Planned)
+Blog/educational content
+
+```prisma
+model Article {
+  id        String @id @default(cuid())
+  
+  // Content
+  title     String @db.String(255)
+  slug      String @unique @db.String(255)
+  excerpt   String @db.String(500)
+  content   String @db.Text
+  
+  // Metadata
+  category  String @db.String(100)
+  tags      String @default("[]") // JSON
+  readTime  Int? // minutes
+  
+  // Author (Planned)
+  authorId  String?
+  author    String @db.String(255) // fallback name
+  
+  // Media
+  imageUrl  String? @db.String(500)
+  
+  // Engagement
+  viewCount Int @default(0)
+  likeCount Int @default(0)
+  shareCount Int @default(0)
+  
+  // Status
+  published Boolean @default(false)
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  publishedAt DateTime?
+  
+  // Indexes
+  @@unique([slug])
+  @@index([category])
+  @@index([published])
+  @@index([publishedAt])
+}
+```
+
+---
+
+### 8.4 Relationships Summary
+
+| From | To | Type | Cascade |
+|------|-----|------|---------|
+| User | SavedCollege | 1:N | Delete user → delete saves |
+| User | Question | 1:N | Delete user → delete questions |
+| User | Answer | 1:N | Delete user → delete answers |
+| User | Review | 1:N | Delete user → delete reviews |
+| College | SavedCollege | 1:N | Delete college → delete saves |
+| College | Question | 1:N | Delete college → delete questions |
+| College | Course | 1:N | Delete college → delete courses |
+| College | Placement | 1:N | Delete college → delete placements |
+| College | Exam | 1:N | Delete college → delete exams |
+| Question | Answer | 1:N | Delete question → delete answers |
+| Course | Placement | 1:N | Delete course → set placement.courseId = null |
+| Course | Exam | 1:N | Delete course → set exam.courseId = null |
+
+---
+
+### 8.5 Database Indexes Strategy
+
+**High-Priority Indexes (Query Performance):**
+- `College.name` - Full-text search
+- `College.location, City, State` - Filtering
+- `College.type` - Filtering
+- `College.rating, placementRate, fees` - Sorting
+- `Question.collegeId, userId` - FK lookups
+- `SavedCollege.userId` - User's saved list
+- `Answer.questionId` - Threading answers
+- `Placement.collegeId, year` - Historical data
+
+**Full-Text Search Indexes:**
+- `College(name, city, state)` - College discovery
+- `Question(title, content)` - Q&A search
+- `Course(name, specialization)` - Course search
+
+**Unique Constraints:**
+- `User.email` - Login uniqueness
+- `College.name` - No duplicate colleges
+- `SavedCollege(userId, collegeId)` - Prevent duplicate saves
+- `Placement(collegeId, courseId, year)` - No duplicate years
+- `Article.slug` - URL uniqueness
+
+---
+
+### 8.6 Indexing Examples
+
+```prisma
+// Composite indexes for common queries
+@@index([collegeId, createdAt]) // get recent questions about college
+@@index([userId, status]) // get user's saves by status
+@@index([year, placementRate]) // get top colleges by year
+
+// Full-text search
+@@fulltext([name, city, state]) // college search
+@@fulltext([title, content]) // question search
+
+// Unique constraints
+@@unique([userId, collegeId]) // prevent duplicate saves
+@@unique([collegeId, courseId, year]) // prevent duplicate placement years
+```
+
+---
+
+### 8.7 Query Optimization Patterns
+
+**Common Queries & Recommended Indexes:**
+
+1. **Get colleges with filters**
+   ```sql
+   SELECT * FROM College 
+   WHERE location LIKE ? AND type = ? AND fees <= ?
+   ORDER BY rating DESC
+   INDEX: (type, location, fees, rating)
+   ```
+
+2. **Get user's saved colleges**
+   ```sql
+   SELECT c.* FROM College c
+   JOIN SavedCollege s ON c.id = s.collegeId
+   WHERE s.userId = ?
+   INDEX: SavedCollege(userId, collegeId), College(id)
+   ```
+
+3. **Get questions for a college**
+   ```sql
+   SELECT * FROM Question
+   WHERE collegeId = ?
+   ORDER BY lastActivityAt DESC
+   INDEX: (collegeId, lastActivityAt)
+   ```
+
+4. **Search questions by keyword**
+   ```sql
+   SELECT * FROM Question
+   WHERE MATCH(title, content) AGAINST(?)
+   INDEX: FULLTEXT(title, content)
+   ```
+
+5. **Get placement trends**
+   ```sql
+   SELECT * FROM Placement
+   WHERE collegeId = ?
+   ORDER BY year DESC
+   INDEX: (collegeId, year)
+   ```
+
+---
+
+### 8.8 Data Validation Rules
+
+**College Entity:**
+- `name`: Required, unique, 1-255 chars
+- `location`: Required, format "City, State"
+- `type`: Enum (Government, Private)
+- `fees`: Float, >= 0
+- `rating`: Float, 0-5
+- `placementRate`: Float, 0-100 (percentage)
+
+**User Entity:**
+- `email`: Required, unique, valid email format
+- `password`: Required, min 6 chars, hashed
+- `name`: Required, 2-255 chars
+- `status`: Enum (active, inactive, suspended)
+
+**Question Entity:**
+- `title`: Required, 10-255 chars
+- `content`: Required, min 20 chars
+- `collegeId`: Required, valid Foreign Key
+- `userId`: Required, valid Foreign Key
+
+**SavedCollege Entity:**
+- Unique constraint on (userId, collegeId)
+- `status`: Enum (interested, shortlisted, rejected, accepted)
+- `priority`: Enum (0, 1, 2)
+
+**Review Entity:**
+- `rating`: Required, 1-5
+- `title`: Required, 1-255 chars
+- `content`: Required, min 20 chars
+- `academicsRating`, etc.: Optional, 1-5 if present
+
+---
+
+### 8.9 Denormalization Strategy
+
+**Calculated/Cached Fields (Update via Triggers/Jobs):**
+
+| Field | Table | Purpose | Update Frequency |
+|-------|-------|---------|-------------------|
+| `savedCount` | College | Quick lookup of popularity | After each save/unsave |
+| `reviewCount` | College | Display on cards | After each review |
+| `ratingCount` | College | For average calculation | After each review |
+| `answerCount` | Question | Sort by answered/unanswered | After each answer |
+| `placedCount` | Placement | For percentage calc | Manual update |
+| `enrolledSeats` | Course | Track capacity | Manual update |
+
+**Why Denormalization:**
+- Fast aggregation queries (no COUNT needed)
+- Better performance for common queries
+- Real-time display updates
+
+---
+
+## 9. Data Flow Architecture
 
 ### 8.1 Authentication Flow
 ```
