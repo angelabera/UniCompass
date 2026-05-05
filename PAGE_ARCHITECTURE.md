@@ -914,6 +914,6 @@ model Answer {
 
 ---
 
-**Document maintained by:** Engineering Team  
+**Document maintained by:** Angela Bera  
 **Last Updated:** May 5, 2026  
 **Questions?** Refer to individual route implementations or backend API docs
