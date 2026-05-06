@@ -232,24 +232,25 @@ export default function CollegesPage() {
           </div>
 
           {totalPages > 1 && (
-            <div className="flex justify-center mt-10 space-x-2">
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className="px-4 py-2 bg-background/90 border border-border rounded-xl text-sm font-medium disabled:opacity-50 hover:bg-muted transition-colors text-foreground shadow-sm"
-              >
-                Previous
-              </button>
-              <div className="flex items-center px-3 text-sm font-medium text-muted-foreground">
-                Page {page} of {totalPages}
+            <div className="flex justify-center mt-10">
+              <div className="flex items-center gap-3">
+                {[...Array(Math.min(10, totalPages))].map((_, idx) => {
+                  const pageNum = idx + 1;
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => setPage(pageNum)}
+                      className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-200 ${
+                        page === pageNum
+                          ? "bg-blue-600 text-white shadow-lg shadow-blue-500/30"
+                          : "bg-background/90 border border-border text-foreground hover:bg-muted hover:border-blue-500/50"
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
               </div>
-              <button
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-                className="px-4 py-2 bg-background/90 border border-border rounded-xl text-sm font-medium disabled:opacity-50 hover:bg-muted transition-colors text-foreground shadow-sm"
-              >
-                Next
-              </button>
             </div>
           )}
         </>
