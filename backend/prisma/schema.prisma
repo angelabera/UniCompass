@@ -3,38 +3,39 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  savedColleges SavedCollege[]
-  questions     Question[]
+  id            String         @id @default(cuid())
+  email         String         @unique
+  password      String
+  name          String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   answers       Answer[]
+  questions     Question[]
+  savedColleges SavedCollege[]
 }
 
 model College {
-  id          String   @id @default(cuid())
+  id          String         @id @default(cuid())
   name        String
   location    String
   description String?
   logo        String?
   imageUrl    String?
   rating      Float?
-  fees        Float? // Average annual fees
-  type        String   @default("Government") // Government or Private
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  fees        Float?
+  type        String         @default("Government")
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
   courses     Course[]
   placements  Placement[]
-  savedBy     SavedCollege[]
   questions   Question[]
+  savedBy     SavedCollege[]
 }
 
 model Question {
@@ -44,9 +45,9 @@ model Question {
   collegeId String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
-  college   College? @relation(fields: [collegeId], references: [id])
   answers   Answer[]
+  college   College? @relation(fields: [collegeId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Answer {
@@ -56,27 +57,27 @@ model Answer {
   questionId String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  user       User     @relation(fields: [userId], references: [id])
   question   Question @relation(fields: [questionId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
 }
 
 model Course {
-  id        String   @id @default(cuid())
+  id        String  @id @default(cuid())
   name      String
   duration  String
   fees      Float?
   collegeId String
-  college   College  @relation(fields: [collegeId], references: [id])
+  college   College @relation(fields: [collegeId], references: [id])
 }
 
 model Placement {
-  id             String   @id @default(cuid())
-  year           Int
-  highestPackage Float?
-  averagePackage Float?
+  id                  String  @id @default(cuid())
+  year                Int
+  highestPackage      Float?
+  averagePackage      Float?
   placementPercentage Float?
-  collegeId      String
-  college        College  @relation(fields: [collegeId], references: [id])
+  collegeId           String
+  college             College @relation(fields: [collegeId], references: [id])
 }
 
 model SavedCollege {
@@ -84,8 +85,8 @@ model SavedCollege {
   userId    String
   collegeId String
   createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
   college   College  @relation(fields: [collegeId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, collegeId])
 }
